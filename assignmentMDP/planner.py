@@ -1,4 +1,5 @@
 import argparse
+from math import gamma
 from pulp import *
 from typing import *
 import numpy as np
@@ -104,7 +105,12 @@ def linear_programming(mdp: MDP) -> Tuple[np.ndarray, np.ndarray]:
 
     prob += lpSum(v)
 
-    for s in range(mdp.states):
+    numS = mdp.states
+    # if mdp.type == "episodic" and mdp.discount == 1:
+    #     prob += lpSum(v[numS-1]) == 0
+    #     numS -= 1
+
+    for s in range(numS):
         for a in range(mdp.actions):
             prob += lpSum([mdp.transitions[s, a, s1] * (mdp.rewards[s, a, s1] + mdp.discount * v[s1]) for s1 in range(mdp.states)]) <= v[s]
     
